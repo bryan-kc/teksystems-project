@@ -2,7 +2,7 @@
 
 ## Technologies used:
 
-Based on https://github.com/KoenR3/docker-nginx-mysql-flask
+Based on https://github.com/tiangolo/uwsgi-nginx-flask-docker/blob/master/python3.7/Dockerfile
 
 ### User Story
 As an avid video game reviewer
@@ -40,7 +40,8 @@ So that I can share my reviews in a way that my readers can respond to
 ### Routes
 
 - `/` fetches the homepage. This returns an index where all posts can be fetched and viewed
-- `/posts/<id>` fetches a particular post. A post can be viewed here and also commented on.
+- `/post/<id>` fetches a particular post. A post can be viewed here and also commented on.
+- `/posts` is for an authenticated user. Here, the authenticated user can create a new blog post.
 - `/login` facilitates logging in. For now only the "video game reviewer" can access an account
 - `/logout` logs the user out.
 
