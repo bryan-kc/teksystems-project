@@ -11,6 +11,9 @@ app.secret_key = os.getenv("SECRET_KEY")
 
 # Init couchdb
 couchconn = couchdb.Server("http://%s:%s@couchdb:5984/" % (app.config['COUCHDB_USER'], app.config['COUCHDB_PASSWORD']))
+# Hack to prevent data persisting.
+del couchconn['users']
+
 for dbname in ['users', 'posts']:
     if dbname not in couchconn:
         db = couchconn.create(dbname)
@@ -71,7 +74,13 @@ def posts():
     if request.method == "GET":
         couchconn = get_db()
         db = couchconn['posts']
-        posts = db.view('_all_docs', include_docs=True)
+        results = db.view('_all_docs', include_docs=True)
+
+        posts = []
+        for row in results.rows:
+            posts.append(
+                {'title': row.doc['title'], 'text': row.doc['text'], 'author': row.doc['author'],
+                 'comments': row.doc['comments']})
 
         return render_template("posts.html", posts=posts)
     if request.method == "POST":
@@ -101,16 +110,11 @@ def get_post(id):
 
         author = request.form.get('author')
         text = request.form.get('text')
-        comment = {'author': author, 'text': text}
-
-        app.logger.info(post)
-
-        post["comments"].append(comment)
-        app.logger.info(post)
+        post["comments"].append({'author': author, 'text': text})
 
         couchconn['posts'].save(post)
 
-        return redirect(url_for('index'))
+        return redirect(request.url)
 
 @app.route("/logout")
 def logout():

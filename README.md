@@ -2,9 +2,10 @@
 
 ## Technologies used:
 
-Based on https://github.com/tiangolo/uwsgi-nginx-flask-docker/blob/master/python3.7/Dockerfile
+- Based on https://github.com/tiangolo/uwsgi-nginx-flask-docker/blob/master/python3.7/Dockerfile
+- CouchDB for storage of posts and users.
 
-### User Story
+## User Story
 As an avid video game reviewer
 I want a way to create blog posts for my video game reviews
 So that I can share my reviews in a way that my readers can respond to
@@ -25,19 +26,17 @@ So that I can share my reviews in a way that my readers can respond to
 - A blog post will show a title, article text (plain text) and an author name
 - Comments are made on blog posts and show comment text (plain text) and an author name
 
-### Usage
+## Usage
 - In the root of the project run:
 1. `docker-compose build` to build the webapp image
 2. `docker-compose up` to run the stack.
+3. In your browser access `0.0.0.0:80` or `localhost:80`
+4. You can login using credentials username: `admin` and password `admin`.
 
-### Testing
-- None at the moment
+## Testing
+- Manual testing can be done on the running webapp.
 
-### Data
-#### Users
-- Users stores a collection of users
-
-### Routes
+## Routes
 
 - `/` fetches the homepage. This returns an index where all posts can be fetched and viewed
 - `/post/<id>` fetches a particular post. A post can be viewed here and also commented on.
@@ -45,3 +44,6 @@ So that I can share my reviews in a way that my readers can respond to
 - `/login` facilitates logging in. For now only the "video game reviewer" can access an account
 - `/logout` logs the user out.
 
+## Discussion
+
+## Future Goals
