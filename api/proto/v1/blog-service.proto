@@ -1,0 +1,114 @@
+syntax = "proto3";
+package v1;
+
+import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+import "protoc-gen-swagger/options/annotations.proto";
+
+option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
+	info: {
+		title: "Video Game Blog service";
+        version: "1.0";
+        contact: {
+            name: "Teksystems project";
+            url: "https://github.com/bryan-kc/teksystems-project";
+            email: "bryankchiu@gmail.com";
+            };
+        };
+        schemes: HTTP;
+        consumes: "application/json";
+        produces: "application/json";
+        responses: {
+            key: "404";
+            value: {
+                description: "Returned when the resource does not exist.";
+                schema: {
+                    json_schema: {
+                    type: STRING;
+                }
+            }
+        }
+    }
+};
+
+
+
+message Comment {
+    string author = 1;
+    string text = 2;
+}
+
+message Post {
+    string author = 1;
+    string title = 2;
+    string text = 3;
+    repeated Comment comments = 4;
+}
+
+message GetPostRequest {
+    string id = 1;
+}
+
+message GetPostResponse {
+    Post post = 1;
+}
+
+message CreatePostRequest {
+    string author = 1;
+    string title = 2;
+    string text = 3;
+}
+
+message CreatePostResponse {
+    string author = 1;
+    string title = 2;
+    string text = 3;
+}
+
+message CreateCommentRequest {
+    string id = 1; // Corresponds to the ID of the post we wish to comment on
+    string author = 2;
+    string comment = 3;
+}
+
+message CreateCommentResponse {
+    Post post = 1;
+}
+
+message ListPostsRequest {
+}
+
+message ListPostsResponse {
+    repeated Post posts = 1;
+}
+
+service BlogService {
+
+    rpc ListPosts(ListPostsRequest) returns (ListPostsResponse) {
+        option (google.api.http) = {
+            get: "/v1/posts"
+        };
+    }
+
+    rpc GetPost(GetPostRequest) returns (GetPostResponse) {
+        option (google.api.http) = {
+            get: "/v1/post/{id}"
+        };
+    }
+
+    rpc CreatePost(CreatePostRequest) returns (CreatePostResponse) {
+        option (google.api.http) = {
+            post: "/v1/post"
+            body: "*"
+        };
+    }
+
+    rpc CreateComment(CreateCommentRequest) returns (CreateCommentResponse) {
+        option (google.api.http) = {
+            post: "/v1/post/{id}"
+            body: "*"
+        };
+    }
+
+}
+

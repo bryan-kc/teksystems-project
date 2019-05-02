@@ -1,9 +1,10 @@
 # TEKsystems DevOps Project
 
-## Technologies used:
+## Requirements
 
-- Based on https://github.com/tiangolo/uwsgi-nginx-flask-docker/blob/master/python3.7/Dockerfile
-- CouchDB for storage of posts and users.
+- Built on Go `1.11.2`
+- Utilizes Protocol Buffers for gRPC/HTTP endpoints https://github.com/golang/protobuf
+- Utilized extended grpc ecosystem https://github.com/grpc-ecosystem/grpc-gateway
 
 ## User Story
 As an avid video game reviewer
@@ -48,7 +49,8 @@ with user `admin` password: `password`
 ## Testing
 - Manual testing can be done on the running webapp.
 
-## Routes
+## API Routes
+
 
 - `/` fetches the homepage. This returns an index where all posts can be fetched and viewed
 - `/post/<id>` fetches a particular post. A post can be viewed here and also commented on.
