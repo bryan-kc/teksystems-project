@@ -6,7 +6,7 @@ pb:
       --proto_path=api/proto/v1 \
       --grpc-gateway_out=logtostderr=true:pkg/api/v1 \
       --go_out=plugins=grpc:pkg/api/v1 \
-      --swagger_out=logtostderr=true:. \
+      --swagger_out=logtostderr=true:api/proto/v1 \
       blog-service.proto
 
 
@@ -17,3 +17,6 @@ deps:
 	go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
 	go get -u github.com/golang/protobuf/protoc-gen-go
 	go get -u -t ./...
+
+fmt:
+	gofmt -s -w .

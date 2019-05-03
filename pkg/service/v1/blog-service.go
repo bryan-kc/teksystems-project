@@ -2,10 +2,10 @@ package v1
 
 import (
 	"context"
+	"fmt"
 	"github.com/boltdb/bolt"
 	"github.com/bryan-kc/teksystems-project/pkg/api/v1"
 	"github.com/gogo/protobuf/proto"
-	"golang.org/x/tools/go/ssa/interp/testdata/src/fmt"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"math/rand"
@@ -19,7 +19,7 @@ const (
 )
 
 type blogServiceServer struct {
-	db       *bolt.DB
+	db *bolt.DB
 }
 
 // NewToDoServiceServer creates  serviceToDo
@@ -96,14 +96,16 @@ func (s *blogServiceServer) CreatePost(ctx context.Context, req *v1.CreatePostRe
 		Comments: comments,
 	}
 
-	err := s.db.View(func(tx *bolt.Tx) error {
+	err := s.db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("posts"))
 
 		postBytes, err := proto.Marshal(post)
 		if err != nil {
 			return err
 		}
+
 		err = b.Put([]byte(postID), postBytes)
+
 		if err != nil {
 			return err
 		}
@@ -127,7 +129,7 @@ func (s *blogServiceServer) CreateComment(ctx context.Context, req *v1.CreateCom
 		Text:   req.Text,
 	}
 
-	err := s.db.View(func(tx *bolt.Tx) error {
+	err := s.db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("posts"))
 		respBytes := b.Get([]byte(req.Id))
 

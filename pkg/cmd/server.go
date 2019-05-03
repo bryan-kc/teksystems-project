@@ -6,8 +6,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/boltdb/bolt"
+	"github.com/bryan-kc/teksystems-project/pkg/service/v1"
 	"log"
-	v1 "teksystems/pkg/service/v1"
 )
 
 // Config is configuration for Server

@@ -11,7 +11,7 @@ import (
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"google.golang.org/grpc"
 
-	"../../../pkg/api/v1"
+	"github.com/bryan-kc/teksystems-project/pkg/api/v1"
 )
 
 // RunServer runs HTTP/REST gateway
