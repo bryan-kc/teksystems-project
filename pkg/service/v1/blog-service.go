@@ -3,11 +3,12 @@ package v1
 import (
 	"context"
 	"github.com/boltdb/bolt"
+	"github.com/bryan-kc/teksystems-project/pkg/api/v1"
 	"github.com/gogo/protobuf/proto"
 	"golang.org/x/tools/go/ssa/interp/testdata/src/fmt"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"math/rand"
-
-	"../../../pkg/api/v1"
 )
 
 const (
@@ -19,12 +20,11 @@ const (
 
 type blogServiceServer struct {
 	db       *bolt.DB
-	hashSeed int64
 }
 
 // NewToDoServiceServer creates  serviceToDo
-func NewBlogServiceServer(db *bolt.DB, seed int64) v1.BlogServiceServer {
-	return &blogServiceServer{db: db, hashSeed: seed}
+func NewBlogServiceServer(db *bolt.DB) v1.BlogServiceServer {
+	return &blogServiceServer{db: db}
 }
 
 func (s *blogServiceServer) ListPosts(ctx context.Context, req *v1.ListPostsRequest) (*v1.ListPostsResponse, error) {
@@ -41,7 +41,7 @@ func (s *blogServiceServer) ListPosts(ctx context.Context, req *v1.ListPostsRequ
 			post := &v1.Post{}
 			err := proto.Unmarshal(v, post)
 			if err != nil {
-				return err
+				return status.Error(codes.Unknown, fmt.Sprintf("Error Fetching Posts: %s", err.Error()))
 			}
 
 			posts = append(posts, post)
@@ -66,13 +66,12 @@ func (s *blogServiceServer) GetPost(ctx context.Context, req *v1.GetPostRequest)
 		respBytes := b.Get([]byte(req.Id))
 
 		if respBytes == nil {
-			// Some kind of nil error. 404
-			return error()
+			return status.Error(codes.NotFound, fmt.Sprintf("Post not found: %s", req.Id))
 		}
 
 		err := proto.Unmarshal(respBytes, resp)
 		if err != nil {
-			return err
+			return status.Error(codes.Unknown, fmt.Sprintf("Error Fetching Post: %s", err.Error()))
 		}
 		return nil
 	})
@@ -90,6 +89,7 @@ func (s *blogServiceServer) CreatePost(ctx context.Context, req *v1.CreatePostRe
 
 	var comments []*v1.Comment
 	post := &v1.Post{
+		Id:       postID,
 		Author:   req.Author,
 		Title:    req.Title,
 		Text:     req.Text,
@@ -116,7 +116,6 @@ func (s *blogServiceServer) CreatePost(ctx context.Context, req *v1.CreatePostRe
 	}
 
 	return &v1.CreatePostResponse{
-		Id:   postID,
 		Post: post,
 	}, nil
 }
@@ -125,7 +124,7 @@ func (s *blogServiceServer) CreateComment(ctx context.Context, req *v1.CreateCom
 	post := &v1.Post{}
 	comment := &v1.Comment{
 		Author: req.Author,
-		Text: req.Text,
+		Text:   req.Text,
 	}
 
 	err := s.db.View(func(tx *bolt.Tx) error {
@@ -133,25 +132,24 @@ func (s *blogServiceServer) CreateComment(ctx context.Context, req *v1.CreateCom
 		respBytes := b.Get([]byte(req.Id))
 
 		if respBytes == nil {
-			// Some kind of nil error. 404
-			return error()
+			return status.Error(codes.NotFound, fmt.Sprintf("Post not found: %s", req.Id))
 		}
 
 		err := proto.Unmarshal(respBytes, post)
 		if err != nil {
-			return err
+			return status.Error(codes.Unknown, fmt.Sprintf("Error Fetching Post: %s", err.Error()))
 		}
 
 		post.Comments = append(post.Comments, comment)
 
 		postBytes, err := proto.Marshal(post)
 		if err != nil {
-			return err
+			return status.Error(codes.Unknown, fmt.Sprintf("Error Writing Comment: %s", err.Error()))
 		}
 
 		err = b.Put([]byte(req.Id), postBytes)
 		if err != nil {
-			return err
+			return status.Error(codes.Unknown, fmt.Sprintf("Error Writing Comment: %s", err.Error()))
 		}
 
 		return nil

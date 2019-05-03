@@ -1,12 +1,12 @@
 {
   "swagger": "2.0",
   "info": {
-    "title": "ToDo service",
+    "title": "Video Game Blog service",
     "version": "1.0",
     "contact": {
-      "name": "go-grpc-http-rest-microservice-tutorial project",
-      "url": "https://github.com/amsokol/go-grpc-http-rest-microservice-tutorial",
-      "email": "medium@amsokol.com"
+      "name": "Teksystems project",
+      "url": "https://github.com/bryan-kc/teksystems-project",
+      "email": "bryankchiu@gmail.com"
     }
   },
   "schemes": [
@@ -161,7 +161,7 @@
         "author": {
           "type": "string"
         },
-        "comment": {
+        "text": {
           "type": "string"
         }
       }
@@ -191,14 +191,8 @@
     "v1CreatePostResponse": {
       "type": "object",
       "properties": {
-        "author": {
-          "type": "string"
-        },
-        "title": {
-          "type": "string"
-        },
-        "text": {
-          "type": "string"
+        "post": {
+          "$ref": "#/definitions/v1Post"
         }
       }
     },
@@ -224,6 +218,9 @@
     "v1Post": {
       "type": "object",
       "properties": {
+        "id": {
+          "type": "string"
+        },
         "author": {
           "type": "string"
         },
