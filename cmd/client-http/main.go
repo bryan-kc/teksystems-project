@@ -61,7 +61,6 @@ func main() {
 	}
 
 	// Call Get Post
-	fmt.Println(fmt.Sprintf("%s/%s/", *address, fmt.Sprintf("v1/post/%s", postResp.Post.ID)))
 	resp, err = http.Get(fmt.Sprintf("%s/%s/", *address, fmt.Sprintf("v1/post/%s", postResp.Post.ID)))
 	if err != nil {
 		log.Fatalf("failed to call Read method: %v", err)
@@ -76,11 +75,12 @@ func main() {
 	log.Printf("Read response: Code=%d, Body=%s\n\n", resp.StatusCode, body)
 
 	// Call Create Comment
-	resp, err = http.Post(fmt.Sprintf("%s%s/%s", *address, "/v1/post/%s", postResp.Post.ID), "application/json", strings.NewReader(fmt.Sprintf(`
-		{"author": "Bryan",
+	resp, err = http.Post(fmt.Sprintf("%s/%s/", *address, fmt.Sprintf("v1/post/%s", postResp.Post.ID)), "application/json", strings.NewReader(fmt.Sprintf(`
+		{"id", "%s",
+		"author": "Bryan",
 		"text": "I agree"
 		}
-	`)))
+	`, postResp.Post.ID)))
 
 	if err != nil {
 		log.Fatalf("failed to call Create comment method: %v", err)
@@ -106,5 +106,4 @@ func main() {
 		log.Fatalf("failed to unmarshal JSON response of Create method: %v", err)
 		fmt.Println("error:", err)
 	}
-
 }

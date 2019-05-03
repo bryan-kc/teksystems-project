@@ -16,7 +16,12 @@ deps:
 	go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway
 	go get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-swagger
 	go get -u github.com/golang/protobuf/protoc-gen-go
-	go get -u -t ./...
+	go get -u github.com/bryan-kc/teksystems-project/pkg/api/v1
+	go get -u github.com/bryan-kc/teksystems-project/pkg/cmd
+	go get -u github.com/bryan-kc/teksystems-project/pkg/protocol/grpc
+    go get -u github.com/bryan-kc/teksystems-project/pkg/protocol/rest
+    go get -u github.com/bryan-kc/teksystems-project/pkg/service/v1
+    go get -u -t ./...
 
 fmt:
 	gofmt -s -w .
