@@ -4,6 +4,7 @@ import (
 	"../protocol/grpc"
 	"../protocol/rest"
 	"context"
+	"flag"
 	"fmt"
 	"github.com/boltdb/bolt"
 	"github.com/bryan-kc/teksystems-project/pkg/service/v1"
@@ -25,6 +26,16 @@ func RunServer() error {
 	ctx := context.Background()
 
 	var cfg Config
+	flag.StringVar(&cfg.GRPCPort, "grpc-port", "", "gRPC port to bind")
+	flag.StringVar(&cfg.HTTPPort, "http-port", "", "HTTP port to bind")
+
+	if len(cfg.GRPCPort) == 0 {
+		return fmt.Errorf("invalid TCP port for gRPC server: '%s'", cfg.GRPCPort)
+	}
+
+	if len(cfg.HTTPPort) == 0 {
+		return fmt.Errorf("invalid TCP port for HTTP gateway: '%s'", cfg.HTTPPort)
+	}
 
 	// Create new DB
 	db, err := bolt.Open("bolt.db", 0600, nil)

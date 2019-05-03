@@ -36,8 +36,6 @@ func (s *blogServiceServer) ListPosts(ctx context.Context, req *v1.ListPostsRequ
 		c := tx.Bucket([]byte("posts")).Cursor()
 
 		for k, v := c.First(); k != nil; k, v = c.Next() {
-			fmt.Printf("key=%s, value=%s", k, v)
-
 			post := &v1.Post{}
 			err := proto.Unmarshal(v, post)
 			if err != nil {
@@ -59,7 +57,7 @@ func (s *blogServiceServer) ListPosts(ctx context.Context, req *v1.ListPostsRequ
 }
 
 func (s *blogServiceServer) GetPost(ctx context.Context, req *v1.GetPostRequest) (*v1.GetPostResponse, error) {
-	resp := &v1.GetPostResponse{}
+	resp := &v1.Post{}
 
 	err := s.db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("posts"))
@@ -80,7 +78,7 @@ func (s *blogServiceServer) GetPost(ctx context.Context, req *v1.GetPostRequest)
 		return nil, err
 	}
 
-	return resp, nil
+	return &v1.GetPostResponse{Post: resp}, nil
 }
 
 func (s *blogServiceServer) CreatePost(ctx context.Context, req *v1.CreatePostRequest) (*v1.CreatePostResponse, error) {

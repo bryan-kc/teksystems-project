@@ -20,3 +20,6 @@ deps:
 
 fmt:
 	gofmt -s -w .
+
+server:
+	go build
