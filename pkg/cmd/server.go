@@ -4,7 +4,6 @@ import (
 	"../protocol/grpc"
 	"../protocol/rest"
 	"context"
-	"flag"
 	"fmt"
 	"github.com/boltdb/bolt"
 	"log"
@@ -32,6 +31,19 @@ func RunServer() error {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	err = db.Update(func(tx *bolt.Tx) error {
+		_, err := tx.CreateBucketIfNotExists([]byte("posts"))
+		if err != nil {
+			return err
+		}
+		return nil
+	})
+
+	if err != nil {
+		return fmt.Errorf("Error creating Posts bucket: %+v", err.Error())
+	}
+
 	defer db.Close()
 
 	v1API := v1.NewBlogServiceServer(db)

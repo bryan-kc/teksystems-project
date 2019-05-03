@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- Built on Go `1.11.2`
+- Built on Go `1.12.4`
 - Utilizes Protocol Buffers for gRPC/HTTP endpoints https://github.com/golang/protobuf
 - Utilized extended grpc ecosystem https://github.com/grpc-ecosystem/grpc-gateway
 
