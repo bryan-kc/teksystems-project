@@ -1,12 +1,12 @@
 package cmd
 
 import (
-	"../protocol/grpc"
-	"../protocol/rest"
 	"context"
 	"flag"
 	"fmt"
 	"github.com/boltdb/bolt"
+	"github.com/bryan-kc/teksystems-project/pkg/protocol/grpc"
+	"github.com/bryan-kc/teksystems-project/pkg/protocol/rest"
 	"github.com/bryan-kc/teksystems-project/pkg/service/v1"
 	"log"
 )
@@ -28,6 +28,7 @@ func RunServer() error {
 	var cfg Config
 	flag.StringVar(&cfg.GRPCPort, "grpc-port", "", "gRPC port to bind")
 	flag.StringVar(&cfg.HTTPPort, "http-port", "", "HTTP port to bind")
+	flag.Parse()
 
 	if len(cfg.GRPCPort) == 0 {
 		return fmt.Errorf("invalid TCP port for gRPC server: '%s'", cfg.GRPCPort)

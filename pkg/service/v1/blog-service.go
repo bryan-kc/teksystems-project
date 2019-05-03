@@ -12,8 +12,6 @@ import (
 )
 
 const (
-	// apiVersion is version of API is provided by server
-	apiVersion  = "v1"
 	letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	idLength    = 12
 )
