@@ -11,8 +11,16 @@ import (
 )
 
 type comment struct {
-	author string `json:"author"`
-	text string `json:"text"`
+	Author string `json:"author"`
+	Text   string `json:"text"`
+}
+
+type post struct {
+	ID string `json:"id"`
+	Author string `json:"author"`
+	Title string `json:"title"`
+	Text string `json:"text"`
+	Comments []string `json:"comments"`
 }
 
 func main() {
@@ -43,19 +51,18 @@ func main() {
 	log.Printf("Create response: Code=%d, Body=%s\n\n", resp.StatusCode, body)
 
 	// parse ID of created Post
-	var post struct {
-		ID  string `json:"id"`
-		Author string `json:"author"`
-		Text string `json:"text"`
+	var postResp struct {
+		Post     post `json:"post"`
 	}
-	err = json.Unmarshal(bodyBytes, &post)
+	err = json.Unmarshal(bodyBytes, &postResp)
 	if err != nil {
 		log.Fatalf("failed to unmarshal JSON response of Create method: %v", err)
 		fmt.Println("error:", err)
 	}
 
 	// Call Get Post
-	resp, err = http.Get(fmt.Sprintf("%s%s/%s", *address, "/v1/post/%s", post.ID))
+	fmt.Println(fmt.Sprintf("%s/%s/", *address, fmt.Sprintf("v1/post/%s", postResp.Post.ID)))
+	resp, err = http.Get(fmt.Sprintf("%s/%s/", *address, fmt.Sprintf("v1/post/%s", postResp.Post.ID)))
 	if err != nil {
 		log.Fatalf("failed to call Read method: %v", err)
 	}
@@ -69,7 +76,7 @@ func main() {
 	log.Printf("Read response: Code=%d, Body=%s\n\n", resp.StatusCode, body)
 
 	// Call Create Comment
-	resp, err = http.Post(fmt.Sprintf("%s%s/%s", *address, "/v1/post/%s", post.ID),"application/json", strings.NewReader(fmt.Sprintf(`
+	resp, err = http.Post(fmt.Sprintf("%s%s/%s", *address, "/v1/post/%s", postResp.Post.ID), "application/json", strings.NewReader(fmt.Sprintf(`
 		{"author": "Bryan",
 		"text": "I agree"
 		}
@@ -89,9 +96,9 @@ func main() {
 	log.Printf("Create comment response: Code=%d, Body=%s\n\n", resp.StatusCode, body)
 
 	var postWithComment struct {
-		ID  string `json:"id"`
-		Author string `json:"author"`
-		Text string `json:"text"`
+		ID       string    `json:"id"`
+		Author   string    `json:"author"`
+		Text     string    `json:"text"`
 		Comments []comment `json:"comments"`
 	}
 	err = json.Unmarshal(bodyBytes, &postWithComment)

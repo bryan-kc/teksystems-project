@@ -37,6 +37,7 @@ func (s *blogServiceServer) ListPosts(ctx context.Context, req *v1.ListPostsRequ
 			post := &v1.Post{}
 			err := proto.Unmarshal(v, post)
 			if err != nil {
+				fmt.Println(fmt.Sprintf("Error Fetching Posts: %s", err.Error()))
 				return status.Error(codes.Unknown, fmt.Sprintf("Error Fetching Posts: %s", err.Error()))
 			}
 
@@ -62,11 +63,13 @@ func (s *blogServiceServer) GetPost(ctx context.Context, req *v1.GetPostRequest)
 		respBytes := b.Get([]byte(req.Id))
 
 		if respBytes == nil {
+			fmt.Println(fmt.Sprintf("Post Not Found: %s", req.Id))
 			return status.Error(codes.NotFound, fmt.Sprintf("Post not found: %s", req.Id))
 		}
 
 		err := proto.Unmarshal(respBytes, resp)
 		if err != nil {
+			fmt.Println(fmt.Sprintf("Error Fetching Post: %s", err.Error()))
 			return status.Error(codes.Unknown, fmt.Sprintf("Error Fetching Post: %s", err.Error()))
 		}
 		return nil
@@ -97,13 +100,15 @@ func (s *blogServiceServer) CreatePost(ctx context.Context, req *v1.CreatePostRe
 
 		postBytes, err := proto.Marshal(post)
 		if err != nil {
-			return err
+			fmt.Println(fmt.Sprintf("Error Writing Post: %s", err.Error()))
+			return status.Error(codes.Unknown, fmt.Sprintf("Error Writing Post: %s", err.Error()))
 		}
 
 		err = b.Put([]byte(postID), postBytes)
 
 		if err != nil {
-			return err
+			fmt.Println(fmt.Sprintf("Error Creating Post: %s", err.Error()))
+			return status.Error(codes.Unknown, fmt.Sprintf("Error Creating Post: %s", err.Error()))
 		}
 
 		return nil
